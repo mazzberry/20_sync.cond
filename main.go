@@ -11,19 +11,20 @@ var ready = false
 
 func main() {
 
-	condition := sync.Cond{L: &sync.Mutex{}}
+	// condition := sync.Cond{L: &sync.Mutex{}}
+	condition := sync.NewCond(&sync.Mutex{})
+
 	for i := 0; i < 1000; i++ {
-		go NewRequest(i, &condition)
+		go NewRequest(i, condition)
 
 	}
 
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 10)
 
 }
 
 func NewRequest(userId int, condition *sync.Cond) {
 	Checking(userId, condition)
-	fmt.Println("new req")
 	condition.L.Lock()
 	defer condition.L.Unlock()
 	for !ready {
